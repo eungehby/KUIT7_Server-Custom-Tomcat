@@ -1,5 +1,9 @@
 package http.util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,5 +34,21 @@ public class HttpRequestUtils {
         } catch (Exception e) {
             return new HashMap<>();
         }
+    }
+
+    public static Map<String, String> parseHeaders(BufferedReader br) throws IOException {
+        Map<String, String> headers = new HashMap<>();
+        String line = br.readLine();
+
+        // HTTP 헤더는 빈 줄("")이 나오기 전까지가 한 묶음입니다.
+        while (line != null && !line.equals("")) {
+            String[] tokens = line.split(": ");
+            if (tokens.length == 2) {
+                // 예: "Content-Length: 40" -> key: "Content-Length", value: "40"
+                headers.put(tokens[0], tokens[1]);
+            }
+            line = br.readLine();
+        }
+        return headers;
     }
 }
